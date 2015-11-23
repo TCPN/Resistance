@@ -1,0 +1,352 @@
+﻿
+<html>
+	<head>
+		<title>
+			Resistance Game
+		</title>
+		<meta name="viewport" content="width=device-width, height=device-height, initial-scale=1.0, user-scalable=false" />
+		<meta name="robots" content="noindex;nofollow" />
+		<meta charset="UTF-8"/>
+	</head>
+	<body>
+		<div id="UIArea" style="width: 100%; height: 100%; background: red;">
+			<div id="infoUI" class="info" style="background: white; height: 3.75em;">
+				<div style="display: inline-block;">
+					嗨！<span id="userName" style="font-weight: bold;">我是誰不重要你不可能知道</span>！
+				</div>
+				<div style="display: inline-block;">
+				您所在的房間是：<span id="roomName" style="font-weight: bold;">這是我的大房間的大房間！</span>。
+				<input type="button" id="leaveRoom" value="離開房間" style="display: none;">
+				</div>
+				<br>
+				<a href="/resistance/rule" target="_blank" style="display: inline;">抵抗組織遊戲規則</a>
+			</div>
+			<div id="operationUI" class="operate" style="background: yellow;">
+				<div id="roomUI" style="height: 100%; display: none;">
+					<div id="usersUI" style="width: 50%; box-sizing: border-box; border-style: ridge; overflow-y: scroll; float: right;">
+					User List:
+					</div>
+					<div id="roomsUI" style="width: 50%; box-sizing: border-box; border-style: ridge; overflow-y: scroll;">
+					Room List:
+					</div>
+					<div id="newRoomUI" style="display: block; background: gray;">
+						新房間：
+						<input type="text" id="newRoomName" style="width: 40%;" onkeypress="if(event.keyCode == 13)this.nextElementSibling.click()">
+						<input type="button" id="newRoom" value="建立房間">
+					</div>
+				</div>
+				
+				<div id="gameUI" class="" style="height: 100%;">
+					<div id="playerlistpanel" style="float: right; width: 20%; height: 95%; box-sizing: border-box; padding: 0.5%; margin: 0.5%; border-style: dashed;">
+						<div style="width: 100%; height: 1em; font-size: 4vmin; text-align: center;">Players</div>
+						<div style="width: 100%; height: 1em; text-align: center; font-weight: bold; font-size: 4vmin;">
+							<span id="blueNumber" style="color: skyblue;">6</span> + <span id="redNumber" style="color: red;">3</span>
+						</div>
+						<style>
+						.chairman .name{
+							background: yellow;
+						}
+						.player{
+							width: 100%; height: 6%; font-size: 3vmin; float: left; background: lightgray; margin-top: 1vh; align-items: center;
+						}
+						.player .textmark{
+							 width: 1em;
+						}
+						.player .vote{
+							float: right;
+						}
+						.player .name{
+							float: left;
+							overflow: hidden;
+						}
+						.player .inproposal{
+							float: left;
+						}
+						</style>
+						<div class="player" id="player_0">
+							<div class="inproposal textmark">V</div>
+							<div class="name">aa</div>
+							<div class="vote textmark">O</div>
+						</div>
+						<div class="player" id="player_1">
+							<div class="inproposal textmark">V</div>
+							<div class="name">aaaaaaaaa</div>
+							<div class="vote textmark">O</div>
+						</div>
+						<div class="player" id="player_2">
+							<div class="inproposal textmark">V</div>
+							<div class="name">a</div>
+							<div class="vote textmark">O</div>
+						</div>
+						<div class="player" id="player_3">
+							<div class="inproposal textmark">V</div>
+							<div class="name">WWWWWWWWWWWW</div>
+							<div class="vote textmark">O</div>
+						</div>
+						<div class="player" id="player_4">
+							<div class="inproposal textmark">V</div>
+							<div class="name">陳仰恩笑哈哈</div>
+							<div class="vote textmark">O</div>
+						</div>
+						<div class="player" id="player_5">
+							<div class="inproposal textmark">V</div>
+							<div class="name">a</div>
+							<div class="vote textmark">O</div>
+						</div>
+						<div class="player" id="player_6">
+							<div class="inproposal textmark">V</div>
+							<div class="name">一二三四五六七八九十十一</div>
+							<div class="vote textmark">O</div>
+						</div>
+						<div class="player" id="player_7">
+							<div class="inproposal textmark">V</div>
+							<div class="name">l</div>
+							<div class="vote textmark">O</div>
+						</div>
+						<div class="player" id="player_8">
+							<div class="inproposal textmark">V</div>
+							<div class="name">.</div>
+							<div class="vote textmark">O</div>
+						</div>
+						<div class="player" id="player_9">
+							<div class="inproposal textmark">V</div>
+							<div class="name">i</div>
+							<div class="vote textmark">O</div>
+						</div>
+					</div>
+					<div id="gameLeftPanel" style="float: left; height: 100%; width: 70%;">
+						<div id="gameInfoUI" style="width: 100%; border-style: double; font-weight: bold;">abc</div>
+						<div id="roundinfo">
+							<style type="text/css">
+								.missionBlock {
+									background: lightgray; margin: 3px; margin-right: 0; font-size: 4vmin; overflow-wrap: break-word; float: left;
+								}
+								.missionBlockElement{
+									text-align: center;
+									height: 2.5em;
+								}
+								.missionRequirement {
+									line-height: 2.5em;
+								}
+								.executeResult {
+									color: red;
+								}
+								.voteCount{
+									background: yellow;
+								}
+							</style>
+							<div class="missionBlock" id="mission_0">
+								<div class="missionBlockElement missionRequirement">2人</div>
+								<div class="missionBlockElement executeResult"></div>
+								<div class="missionBlockElement voteCount">第1次投票</div>
+							</div>
+							<div class="missionBlock" id="mission_1">
+								<div class="missionBlockElement missionRequirement">3人</div>
+								<div class="missionBlockElement executeResult">XX</div>
+								<div class="missionBlockElement voteCount">第2次投票</div>
+							</div>
+							<div class="missionBlock" id="mission_2">
+								<div class="missionBlockElement missionRequirement">4人</div>
+								<div class="missionBlockElement executeResult">XXX</div>
+								<div class="missionBlockElement voteCount">第4次投票</div>
+							</div>
+							<div class="missionBlock" id="mission_3">
+								<div class="missionBlockElement missionRequirement">5人</div>
+								<div class="missionBlockElement executeResult">XXXX</div>
+								<div class="missionBlockElement voteCount">第3次投票</div>
+							</div>
+							<div class="missionBlock" id="mission_4">
+								<div class="missionBlockElement missionRequirement">5人</div>
+								<div class="missionBlockElement executeResult">X</div>
+								<div class="missionBlockElement voteCount">第5次投票</div>
+							</div>
+						</div>
+						<div id="actionpanel">
+							<style type="text/css">
+								.buttonpanel{
+									display: block; flex-direction: row; justify-content: space-around; height: 100%; width: 100%; text-align: center;
+								}
+								.bigbutton{
+									box-sizing: border-box; height: 100%; width: 50%; float: left; display: inline-block; flex-direction: row; justify-content: center; align-items: center; border-style: outset; font-size: 6vmin; text-align: center;
+								}
+								.proposeName {
+									box-sizing: border-box; background: lightgray; text-align: center; margin-top: 3px;display: inline-block; font-size: 4vmin;
+									border-style: solid;
+								}
+							</style>
+							<div id="proposepanel" class="buttonpanel" style="padding: 3px; display: none;">
+								<div id="proposeName_0" class="proposeName">aa</div>
+								<div id="proposeName_1" class="proposeName">aaaaaaaaa</div>
+								<div id="proposeName_2" class="proposeName">a</div>
+								<div id="proposeName_3" class="proposeName">WWWWWWWWWWWW</div>
+								<div id="proposeName_4" class="proposeName">陳仰恩笑哈哈</div>
+								<div id="proposeName_5" class="proposeName">a</div>
+								<div id="proposeName_6" class="proposeName">一二三四五六七八九十十一</div>
+								<div id="proposeName_7" class="proposeName">l</div>
+								<div id="proposeName_8" class="proposeName">.</div>
+								<div id="proposeName_9" class="proposeName">i</div>
+								<input type="button" id="proposeDone" value="Done" style="margin: auto;"><br>
+							</div>
+							<div id="votepanel" class="buttonpanel">
+								<!--<div						style="height: 100%; float: left; flex: 1"></div>-->
+								<div id="vote_Yes" class="bigbutton" style="background: lightgray; ">
+									<div>贊成</div>
+								</div>
+								<!--<div						style="height: 100%; float: left; flex: 1"></div>-->
+								<div id="vote_No" class="bigbutton" style="background: lightgray; ">
+									<div>反對</div>
+								</div>
+								<!--<div						style="height: 100%; float: left; flex: 1"></div>-->
+							</div>
+							<div id="executemissionpanel" class="buttonpanel" style="display: none;">
+								<!--<div						style="height: 100%; float: left; flex: 1"></div>--> <!-- 若不斷行，則應改用較小font-size -->
+								<div id="execute_Good" class="bigbutton" style="background: skyblue;">
+									<div>完成<br>任務</div>
+								</div>
+								<!--<div						style="height: 100%; float: left; flex: 1"></div>-->
+								<div id="execute_Bad" class="bigbutton" style="background: lightcoral;">
+									<div>破壞<br>任務</div>
+								</div>
+								<!--<div						style="height: 100%; float: left; flex: 1"></div>-->
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div id="chatUI" class="chat" style="background: blue; text-align: center;">
+				<div id="chatDisplay" style="overflow-y: scroll; border-style: ridge;">
+				</div>
+				<div id="chatInputUI">
+					<input type="text" id="chatInput" onkeypress="if(event.keyCode == 13)this.nextElementSibling.click()">
+					<input type="button" id="chatSend" value="送出訊息">
+				</div>
+			</div>
+		</div>
+		<script language="javascript">
+			namew = -1;
+			function adjustUI()
+			{
+				var w = document.getElementById("UIArea").offsetWidth;
+				var h = document.getElementById("UIArea").offsetHeight;
+				var infoUI = document.getElementById("infoUI");
+				var operationUI = document.getElementById("operationUI");
+				var chatUI = document.getElementById("chatUI");
+				var chatDisplay = document.getElementById("chatDisplay");
+				var chatInputUI = document.getElementById("chatInputUI");
+				var chatInput = document.getElementById("chatInput");
+				var chatSend = document.getElementById("chatSend");
+				if(w/h > 4/3)
+				{
+					chatUI.style.float = "right";
+					operationUI.style.float = "left";
+					operationUI.style.width = "75%";
+					chatUI.style.width = "25%";
+					operationUI.style.height = h - infoUI.offsetHeight + "px";
+					chatUI.style.height = h - infoUI.offsetHeight + "px";
+					chatInput.style.width = chatUI.offsetWidth - 4 + "px";
+				}
+				else
+				{
+					chatUI.style.float = "";
+					operationUI.style.float = "";
+					operationUI.style.width = "100%";
+					chatUI.style.width = "100%";
+					chatUI.style.height = "6em"; //
+					operationUI.style.height = h - chatUI.offsetHeight - infoUI.offsetHeight + "px";
+					chatInput.style.width = chatUI.offsetWidth - chatSend.offsetWidth - 12 + "px";
+				}
+				chatDisplay.style.height = chatUI.offsetHeight - chatInputUI.offsetHeight - 9 + "px";
+				
+				var roomUI = document.getElementById("roomUI");
+				var usersUI = document.getElementById("usersUI");
+				var roomsUI = document.getElementById("roomsUI");
+				var newRoomUI = document.getElementById("newRoomUI");
+				
+				var tmp = roomUI.offsetHeight - newRoomUI.offsetHeight;
+				roomsUI.style.height = tmp + "px";
+				usersUI.style.height = tmp + "px";
+				
+				
+				var gameUI = document.getElementById("gameUI");
+				var playerlistpanel = document.getElementById("playerlistpanel");
+				var ps = playerlistpanel.getElementsByClassName("name");
+				var vs = playerlistpanel.getElementsByClassName("vote");
+				var prs = playerlistpanel.getElementsByClassName("inproposal");
+				var wlimit = gameUI.offsetWidth / 3 - vs[0].offsetWidth - prs[0].offsetWidth - 15;
+				var maxw = 0;
+				for(var i in ps)
+				{
+					if(ps[i].offsetWidth > wlimit)
+					{
+						ps[i].style.width = wlimit + "px";
+						maxw = wlimit;
+					}
+					else if(ps[i].offsetWidth > maxw)
+						maxw = ps[i].offsetWidth;
+				}
+				playerlistpanel.style.width = maxw + vs[0].offsetWidth + prs[0].offsetWidth + 15 + "px";
+				
+				var gameLeftPanel = document.getElementById("gameLeftPanel");
+				var gameInfoUI = document.getElementById("gameInfoUI");
+				var roundinfo = document.getElementById("roundinfo");
+				var actionpanel = document.getElementById("actionpanel");
+				var proposepanel = document.getElementById("proposepanel");
+				var votepanel = document.getElementById("votepanel");
+				var executemissionpanel = document.getElementById("executemissionpanel");
+				gameLeftPanel.style.width = gameUI.offsetWidth - playerlistpanel.offsetWidth - 30 + "px";
+				var mbs = roundinfo.getElementsByClassName("missionBlock");
+				var mrs = roundinfo.getElementsByClassName("missionRequirement");
+				var ers = roundinfo.getElementsByClassName("executeResult");
+				var vcs = roundinfo.getElementsByClassName("voteCount");
+				var maxh = 0;
+				for(var i = 0; i < mbs.length; i++)
+				{
+					mbs[i].style.width = (roundinfo.offsetWidth - 15) / 5 + "px";
+					if(mbs[i].offsetHeight > maxh)
+						maxh = mbs[i].offsetHeight;
+				}
+				roundinfo.style.height = maxh + 10 + "px";
+				var gh = (gameLeftPanel.offsetHeight - gameInfoUI.offsetHeight - roundinfo.offsetHeight);
+				actionpanel.style.height = gh  + "px";
+				
+				var vyes = document.getElementById("vote_Yes");
+				var vno = document.getElementById("vote_No");
+				var egood = document.getElementById("execute_Good");
+				var ebad = document.getElementById("execute_Bad");
+				var mtop = (vyes.offsetHeight - vyes.firstElementChild.offsetHeight) / 2;
+				vyes.firstElementChild.style.marginTop = mtop + "px";
+				vno.firstElementChild.style.marginTop = mtop + "px";
+				mtop = (egood.offsetHeight - egood.firstElementChild.offsetHeight) / 2;
+				egood.firstElementChild.style.marginTop = mtop + "px";
+				ebad.firstElementChild.style.marginTop = mtop + "px";
+				if(ebad.style.display == "none")
+					egood.style.float = "none";
+				else
+					egood.style.float = "left";
+			}
+			window.addEventListener("resize", adjustUI);
+			adjustUI();adjustUI();
+			alert("高:" + window.innerHeight + " 寬:" + window.innerWidth);
+			var lighting = false;
+			setInterval(function(){
+				var blinks = document.getElementsByClassName("blink");
+				for(var i = 0; i < blinks.length; i ++)
+				{
+					if(blinks[i].style)
+					{
+						if(lighting)
+						{
+							blinks[i].style.background = blinks[i].obg;
+						}
+						else
+						{
+							blinks[i].obg = blinks[i].style.background;
+							blinks[i].style.background = "yellow";
+						}
+					}
+				}
+				lighting = !lighting;
+			}, 400);
+		</script>
+	</body>
+</html>

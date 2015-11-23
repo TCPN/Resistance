@@ -1,0 +1,110 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+	<head>
+		<title>
+			抵抗組織 - 圖例
+		</title>
+		<style type="text/css">
+		.playerblock {
+			background-color: lightgray; 
+			width: 150px; 
+			display:flex; 
+			margin-top: 2px; 
+			margin-left: 50px;
+			height: 1.5em;
+			justify-content: center;
+			align-items: center;
+		}
+		.playerblock.lastblock {
+			margin-bottom: 15px;
+		}
+		.playerblock.goodman {
+			background-color: rgb(135, 206, 235);
+		}
+		.playerblock.badman {
+			background-color: rgb(240, 128, 128);
+		}
+		.playername {
+			flex: 1;
+			height: 1em;
+		}
+		.playername.leader {
+			background-color: yellow;
+		}
+		.markblock {
+			width: 1em;
+			visibility: hidden;
+		}
+		.markblock.show {
+			visibility: visible;
+		}
+		</style>
+	</head>
+	<body style="font-size: large;">
+		以下是圖例：<br>
+		<div class="playerblock lastblock">
+			<div class="markblock">V</div>
+			<div class="playername">我的名字</div>
+			<div class="markblock">X</div>
+		</div>
+		
+		<div class="playerblock">
+			<div class="markblock">V</div>
+			<div class="playername">一般人</div>
+			<div class="markblock">X</div>
+		</div>
+		<div class="playerblock">
+			<div class="markblock">V</div>
+			<div class="playername leader">領袖</div>
+			<div class="markblock">X</div>
+		</div>
+		<div class="playerblock">
+			<div class="markblock">V</div>
+			<div class="playername">下個領袖</div>
+			<div class="markblock">X</div>
+		</div>
+		<div class="playerblock lastblock">
+			<div class="markblock">V</div>
+			<div class="playername">下下個領袖</div>
+			<div class="markblock">X</div>
+		</div>
+		
+		<div class="playerblock goodman">
+			<div class="markblock">V</div>
+			<div class="playername">好人</div>
+			<div class="markblock">X</div>
+		</div>
+		<div class="playerblock badman">
+			<div class="markblock">V</div>
+			<div class="playername">壞人</div>
+			<div class="markblock">X</div>
+		</div>
+		<div class="playerblock lastblock">
+			<div class="markblock">V</div>
+			<div class="playername">不知道</div>
+			<div class="markblock">X</div>
+		</div>
+		
+		<div class="playerblock">
+			<div class="markblock show">V</div>
+			<div class="playername">被選上了</div>
+			<div class="markblock">X</div>
+		</div>
+		<div class="playerblock lastblock">
+			<div class="markblock">V</div>
+			<div class="playername">沒被選上</div>
+			<div class="markblock">X</div>
+		</div>
+		
+		<div class="playerblock">
+			<div class="markblock">V</div>
+			<div class="playername">投了贊成</div>
+			<div class="markblock show">O</div>
+		</div>
+		<div class="playerblock lastblock">
+			<div class="markblock">V</div>
+			<div class="playername">投了反對</div>
+			<div class="markblock show">X</div>
+		</div>
+	</body>
+</html>

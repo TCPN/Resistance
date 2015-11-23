@@ -1,0 +1,101 @@
+﻿
+<html>
+	<head>
+		<title>
+			Socket IO test
+		</title>
+		<meta name="viewport" content="width=device-width, height=device-height, initial-scale=1.0, user-scalable=false" />
+		<meta charset="UTF-8"/>
+	</head>
+	<body>
+		<script src="/socket.io/socket.io.js"></script>
+		<script language="javascript">
+			
+			function newUserEnter(name, password)
+			{
+				user.name = name;
+				user.password = password;
+				user.chatContent = "";
+				user.states = undefined;
+				user.msgtimer = [];
+				user.socket = io(window.location.origin);
+				user.socket.emit_t = function(event, data)
+				{
+					user.socket.emit(event, data);
+					user.msgtimer.push(setTimeout(function(){user.socket.disconnect();user.socket.connect();}, 5000));
+				}
+				//user.socket.emit("login", {name: user.name, password: user.password});
+				user.socket.on("AskForName", function(){
+					user.socket.emit("login", {name: user.name, password: user.password});
+				});
+				user.socket.on("Check", function(){
+					user.socket.emit("ReplyCheck");
+				});
+				user.socket.on("toClient", function(data){
+					user.msgtimer.forEach(clearTimeout);
+					user.msgtimer = [];
+					console.log(user.name + " received somthing.");
+					
+					if(data.cmd == "show")
+					{
+						user.states = data;
+					}
+					else if(data.cmd == "enter")
+					{
+						//user.chatContent += ("<i>" + data.user + "進到了房間。</i><br>");
+						user.socket.emit_t("toServer", {cmd: "get"});
+					}
+					else if(data.cmd == "leave")
+					{
+						//user.chatContent += ("<i>" + data.user + "離開了房間。</i><br>");
+						user.socket.emit_t("toServer", {cmd: "get"});
+					}
+					else if(data.cmd == "MSG")
+					{
+						//alert(data.user + " say " + data.sentence);
+						user.chatContent += (data.user + ": " + data.content + "<br>");
+					}
+					else if(data.cmd == "notice")
+					{
+						alert(data.content);
+					}
+					try{
+						ShowProperUI(user.states);
+					}catch(e){
+						console.log(e.message);
+						console.log(e.stack);
+					}
+				});
+				user.socket.on("Error", function(data){
+					alert(data.message);
+				});
+				user.socket.on("error", function(er){
+					console.log(er.message);
+					console.log(er.stack);
+				});
+				//user.socket.emit_t("login", {name: user.name});
+				user.socket.on("loginSuccess", function(data){
+					user.socket.emit_t("toServer", {cmd: "get"});
+				});
+				user.socket.on("loginFailed", function(data){
+					document.body.innerHTML = "登入失敗，請重新整理";
+				});
+				document.getElementById("UIArea").style.display = "block";
+			}
+			var inputName = prompt("請輸入您的名字：");
+			if(!checkInput(inputName))
+				document.body.innerHTML = "請先輸入您的名字"
+			else
+			{
+				var inputPassowrd = prompt("請輸入你的密碼(沒有設定過的話可輸入一組新密碼)：");
+				if(!checkInput(inputPassowrd))
+					document.body.innerHTML = "請輸入您的密碼"
+				else
+				{
+					newUserEnter(inputName, inputPassowrd);
+				}
+			}
+			
+		</script>
+	</body>
+</html>

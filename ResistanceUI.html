@@ -1,0 +1,1007 @@
+﻿
+<html>
+	<head>
+		<title>
+			抵抗組織
+		</title>
+		<meta name="viewport" content="width=device-width, height=device-height, initial-scale=1.0, user-scalable=no" />
+		<meta name="robots" content="noindex;nofollow" />
+		<meta charset="UTF-8"/>
+	</head>
+	<body>
+		<script src="/socket.io/socket.io.js"></script>
+		<div id="UIArea"  style="width: 100%; height: 100%; display: none; ">
+			<div id="infoUI" class="info" style="background: lightblue; height: 3.75em; overflow: auto;">
+				<div style="display: inline-block;">
+					嗨，
+					<span id="userName" style="font-weight: bold;">
+						我是誰不重要你不可能知道
+					</span>！
+				</div>
+				<div style="display: inline-block;">
+					您所在的房間是：
+					<span id="roomName" style="font-weight: bold;">
+						這是我的大房間的大房間！
+					</span>。
+					<input type="button" id="leaveRoom" value="離開房間" style="display: none;">
+				</div>
+				<br>
+				<a href="/resistance/rule" target="_blank" style="display: inline;">
+					抵抗組織遊戲規則
+				</a>
+			</div>
+			<div id="operationUI" class="operate" style="">
+				<div id="roomUI" style="height: 100%; display: none;">
+					<div id="usersUI" style="width: 50%; box-sizing: border-box; border-style: ridge; overflow-y: scroll; float: right;">
+						玩家名單:
+					</div>
+					<div id="roomsUI" style="width: 50%; box-sizing: border-box; border-style: ridge; overflow-y: scroll;">
+						房間列表:
+					</div>
+					<div id="newRoomUI" style="display: block;">
+						新房間：
+						<input type="text" id="newRoomName" style="width: 40%;" onkeypress="if(event.keyCode == 13)this.nextElementSibling.click()">
+						<input type="button" id="newRoom" value="建立房間">
+					</div>
+					<div id="newGameUI" style="display: block;">
+						<input type="button" id="startGame" value="開始遊戲" disabled>
+					</div>
+					<input type="button" id="specGame" value="觀戰">
+				</div>
+				
+				<div id="gameUI" class="" style="height: 100%; display: none;">
+					<div id="playerlistpanel" style="float: right; width: 20%; height: 95%; min-width: 20%; box-sizing: border-box; padding: 0.5%; margin: 0.5%; border-style: dashed; overflow-y: auto;">
+						<div style="width: 100%; height: 1em; font-size: 4vmin; text-align: center;">
+							Players
+						</div>
+						<div style="width: 100%; height: 1em; text-align: center; font-weight: bold; font-size: 4vmin;">
+							<span id="blueNumber" style="color: skyblue;">
+								6
+							</span>
+							+
+							<span id="redNumber" style="color: red;">
+								3
+							</span>
+						</div>
+						<div class="playerInstruction" style="font-size: 9px; height: 1em; text-align: center; overflow: hidden;">
+							<a href="/resistance/legend" target="_blank" style="color: black;">
+								看不懂圖示？
+							</a>
+						</div>
+						<style>
+							.chairman .name{
+								background: yellow;
+							}
+							.player{
+								width: 100%; height: 6%; font-size: 3vmin; float: left; background: lightgray; margin-top: 1vh; align-items: center;
+								min-height: 1em; display: flex; overflow: hidden;
+							}
+							.player .textmark{
+								 width: 1em;
+							}
+							.player .vote{
+								float: right;
+							}
+							.player .name{
+								float: left;
+								overflow: hidden;
+								flex: 1;
+								align-self: flex-start;
+								/*height: 1em;*/
+							}
+							.player .inproposal{
+								float: left;
+							}
+						</style>
+						<div class="player" id="player_0">
+							<div class="inproposal textmark">V</div>
+							<div class="name">aa</div>
+							<div class="vote textmark">O</div>
+						</div>
+						<div class="player" id="player_1">
+							<div class="inproposal textmark">V</div>
+							<div class="name">aaaaaaaaa</div>
+							<div class="vote textmark">O</div>
+						</div>
+						<div class="player" id="player_2">
+							<div class="inproposal textmark">V</div>
+							<div class="name">a</div>
+							<div class="vote textmark">O</div>
+						</div>
+						<div class="player" id="player_3">
+							<div class="inproposal textmark">V</div>
+							<div class="name">WWWWWWWWWWWW</div>
+							<div class="vote textmark">O</div>
+						</div>
+						<div class="player" id="player_4">
+							<div class="inproposal textmark">V</div>
+							<div class="name">陳仰恩笑哈哈</div>
+							<div class="vote textmark">O</div>
+						</div>
+						<div class="player" id="player_5">
+							<div class="inproposal textmark">V</div>
+							<div class="name">a</div>
+							<div class="vote textmark">O</div>
+						</div>
+						<div class="player" id="player_6">
+							<div class="inproposal textmark">V</div>
+							<div class="name">一二三四五六七八九十十一</div>
+							<div class="vote textmark">O</div>
+						</div>
+						<div class="player" id="player_7">
+							<div class="inproposal textmark">V</div>
+							<div class="name">l</div>
+							<div class="vote textmark">O</div>
+						</div>
+						<div class="player" id="player_8">
+							<div class="inproposal textmark">V</div>
+							<div class="name">.</div>
+							<div class="vote textmark">O</div>
+						</div>
+						<div class="player" id="player_9">
+							<div class="inproposal textmark">V</div>
+							<div class="name">i</div>
+							<div class="vote textmark">O</div>
+						</div>
+					</div>
+					<div id="gameLeftPanel" style="float: left; height: 100%; width: 70%;">
+						<div id="gameInfoUI" style="width: 100%; border-style: double; font-weight: bold; box-sizing: border-box; "></div>
+						<div id="roundinfo">
+							<style type="text/css">
+								.missionBlock {
+									background: lightgray; margin: 3px; margin-right: 0; font-size: 4vmin; overflow-wrap: break-word; float: left; box-sizing: border-box; 
+									border-style: solid; border-color: lightgray;
+								}
+								.missionBlockElement{
+									text-align: center;
+									height: 2.5em;
+									line-height: 1.2em;
+									display: flex;
+									justify-content: center;
+									/*overflow: hidden;*/
+								}
+								.missionRequirement {
+								}
+								.executeResult {
+									color: red;
+								}
+								.voteCount{
+									background: yellow;
+								}
+							</style>
+							<div class="missionBlock" id="mission_0">
+								<div class="missionBlockElement missionRequirement"></div>
+								<div class="missionBlockElement executeResult"></div>
+								<div class="missionBlockElement voteCount"></div>
+							</div>
+							<div class="missionBlock" id="mission_1">
+								<div class="missionBlockElement missionRequirement"></div>
+								<div class="missionBlockElement executeResult"></div>
+								<div class="missionBlockElement voteCount"></div>
+							</div>
+							<div class="missionBlock" id="mission_2">
+								<div class="missionBlockElement missionRequirement"></div>
+								<div class="missionBlockElement executeResult"></div>
+								<div class="missionBlockElement voteCount"></div>
+							</div>
+							<div class="missionBlock" id="mission_3">
+								<div class="missionBlockElement missionRequirement"></div>
+								<div class="missionBlockElement executeResult"></div>
+								<div class="missionBlockElement voteCount"></div>
+							</div>
+							<div class="missionBlock" id="mission_4">
+								<div class="missionBlockElement missionRequirement"></div>
+								<div class="missionBlockElement executeResult"></div>
+								<div class="missionBlockElement voteCount"></div>
+							</div>
+						</div>
+						<div id="actionpanel">
+							<style type="text/css">
+								.buttonpanel{
+									display: block; height: 100%; width: 100%; text-align: center;
+									flex-direction: row; justify-content: space-around; align-content: stretch; flex-wrap: wrap;
+								}
+								.bigbutton{
+									box-sizing: border-box; height: 100%; width: 50%; float: left; display: block; flex-direction: row; justify-content: center; align-items: center; border-style: outset; font-size: 6vmin; text-align: center;
+								}
+								.proposeName {
+									/*box-sizing: border-box; */
+									background: lightgray; text-align: center; margin-top: 3px; font-size: 4vmin;
+									display: inline-block; 
+									min-height: 1.25em;
+									min-width: 20%;
+									justify-content: center;
+									align-items: center;
+								}
+							</style>
+							<input type="button" id="endGame" value="回到房間">
+							<div id="proposepanel" class="buttonpanel" style="padding: 3px; display: none;">
+								<div id="proposeName_0" class="proposeName">aa</div>
+								<div id="proposeName_1" class="proposeName">aaaaaaaaa</div>
+								<div id="proposeName_2" class="proposeName">a</div>
+								<div id="proposeName_3" class="proposeName">WWWWWWWWWWWW</div>
+								<div id="proposeName_4" class="proposeName">陳仰恩笑哈哈</div>
+								<div id="proposeName_5" class="proposeName">a</div>
+								<div id="proposeName_6" class="proposeName">一二三四五六七八九十十一</div>
+								<div id="proposeName_7" class="proposeName">l</div>
+								<div id="proposeName_8" class="proposeName">.</div>
+								<div id="proposeName_9" class="proposeName">i</div>
+								<input type="button" id="proposeDone" value="Done" style="margin: auto;"><br>
+							</div>
+							<div id="votepanel" class="buttonpanel">
+								<div id="vote_Yes" class="bigbutton" style="background: lightgray; ">
+									<div>贊成</div>
+								</div>
+								<div id="vote_No" class="bigbutton" style="background: lightgray; ">
+									<div>反對</div>
+								</div>
+							</div>
+							<div id="executemissionpanel" class="buttonpanel" style="display: none;">
+								<div id="execute_Good" class="bigbutton" style="background: skyblue;">
+									<div>
+										完成<br>
+										任務
+									</div>
+								</div>
+								<div id="execute_Bad" class="bigbutton" style="background: lightcoral;">
+									<div>
+										破壞<br>
+										任務
+									</div>
+								</div>
+							</div> <!--executemissionpanel-->
+						</div> <!--actionpanel-->
+					</div> <!--gameLeftPanel-->
+				</div> <!--gameUI-->
+			</div> <!--operationUI-->
+			<div id="chatUI" class="chat" style="text-align: center; background: bisque; display: none;">
+				<div id="chatDisplay" style="overflow-y: scroll; border-style: ridge; text-align: left; box-sizing: border-box; ">
+				</div>
+				<div id="chatInputUI">
+					<input type="text" id="chatInput" onkeypress="if(event.keyCode == 13)this.nextElementSibling.click()">
+					<input type="button" id="chatSend" value="送出訊息">
+				</div>
+			</div>
+			
+			<div id="debugUI" style="display: none;">
+			</div>
+		</div>
+		<script language="javascript">
+			function adjustUI()
+			{
+				var w = document.getElementById("UIArea").offsetWidth;
+				var h = document.getElementById("UIArea").offsetHeight;
+				var infoUI = document.getElementById("infoUI");
+				var operationUI = document.getElementById("operationUI");
+				var chatUI = document.getElementById("chatUI");
+				var chatDisplay = document.getElementById("chatDisplay");
+				var chatInputUI = document.getElementById("chatInputUI");
+				var chatInput = document.getElementById("chatInput");
+				var chatSend = document.getElementById("chatSend");
+				if(w/h > 4/3)
+				{
+					chatUI.style.float = "right";
+					operationUI.style.float = "left";
+					operationUI.style.width = "75%";
+					chatUI.style.width = "25%";
+					operationUI.style.height = h - infoUI.offsetHeight + "px";
+					chatUI.style.height = h - infoUI.offsetHeight + "px";
+					chatInput.style.width = chatUI.offsetWidth - 4 + "px";
+				}
+				else
+				{
+					chatUI.style.float = "";
+					operationUI.style.float = "";
+					operationUI.style.width = "100%";
+					chatUI.style.width = "100%";
+					chatUI.style.height = "6em"; //
+					operationUI.style.height = h - chatUI.offsetHeight - infoUI.offsetHeight + "px";
+					chatInput.style.width = chatUI.offsetWidth - chatSend.offsetWidth - 12 + "px";
+				}
+				chatDisplay.style.height = chatUI.offsetHeight - chatInputUI.offsetHeight - 9 + "px";
+				chatDisplay.scrollTop = chatDisplay.scrollHeight;
+				
+				var roomUI = document.getElementById("roomUI");
+				var usersUI = document.getElementById("usersUI");
+				var roomsUI = document.getElementById("roomsUI");
+				var newRoomUI = document.getElementById("newRoomUI");
+				
+				var tmp = roomUI.offsetHeight - newRoomUI.offsetHeight;
+				roomsUI.style.height = tmp + "px";
+				usersUI.style.height = tmp + "px";
+				
+				
+				var gameUI = document.getElementById("gameUI");
+				var playerlistpanel = document.getElementById("playerlistpanel");
+				var ps = playerlistpanel.getElementsByClassName("name");
+				var vs = playerlistpanel.getElementsByClassName("vote");
+				var prs = playerlistpanel.getElementsByClassName("inproposal");
+				var wlimit = gameUI.offsetWidth / 4 - vs[0].offsetWidth - prs[0].offsetWidth - 15;
+				var maxw = 0; // why not just let width be fixed?
+				for(var i in ps)
+				{
+					if(ps[i].offsetWidth > wlimit)
+					{
+						ps[i].style.width = wlimit + "px";
+						maxw = wlimit;
+					}
+					else if(ps[i].offsetWidth > maxw)
+						maxw = ps[i].offsetWidth;
+				}
+				playerlistpanel.style.width = maxw + vs[0].offsetWidth + prs[0].offsetWidth + 15 + "px";
+				
+				var gameLeftPanel = document.getElementById("gameLeftPanel");
+				var gameInfoUI = document.getElementById("gameInfoUI");
+				var roundinfo = document.getElementById("roundinfo");
+				var actionpanel = document.getElementById("actionpanel");
+				var proposepanel = document.getElementById("proposepanel");
+				var votepanel = document.getElementById("votepanel");
+				var executemissionpanel = document.getElementById("executemissionpanel");
+				gameLeftPanel.style.width = gameUI.offsetWidth - playerlistpanel.offsetWidth - 20 + "px";
+				var mbs = roundinfo.getElementsByClassName("missionBlock");
+				var mrs = roundinfo.getElementsByClassName("missionRequirement");
+				var ers = roundinfo.getElementsByClassName("executeResult");
+				var vcs = roundinfo.getElementsByClassName("voteCount");
+				var maxh = 0;
+				for(var i = 0; i < mbs.length; i++)
+				{
+					mbs[i].style.width = (roundinfo.offsetWidth - 15) / 5 + "px";
+					if(mbs[i].offsetHeight > maxh)
+						maxh = mbs[i].offsetHeight;
+				}
+				roundinfo.style.height = maxh + 10 + "px";
+				var gh = (gameLeftPanel.offsetHeight - gameInfoUI.offsetHeight - roundinfo.offsetHeight);
+				actionpanel.style.height = gh  + "px";
+				
+				var vyes = document.getElementById("vote_Yes");
+				var vno = document.getElementById("vote_No");
+				var egood = document.getElementById("execute_Good");
+				var ebad = document.getElementById("execute_Bad");
+				var mtop = (vyes.offsetHeight - vyes.firstElementChild.offsetHeight) / 2;
+				vyes.firstElementChild.style.marginTop = mtop + "px";
+				vno.firstElementChild.style.marginTop = mtop + "px";
+				mtop = (egood.offsetHeight - egood.firstElementChild.offsetHeight) / 2;
+				egood.firstElementChild.style.marginTop = mtop + "px";
+				ebad.firstElementChild.style.marginTop = mtop + "px";
+				if(ebad.style.display == "none")
+					egood.style.float = "none";
+				else
+					egood.style.float = "left";
+			}
+			window.addEventListener("resize", adjustUI);
+			
+		</script>
+		<script language="javascript">
+			/////////////////////////
+			function checkInput(string)
+			{
+				return (string != null && !!string.match(/\S/));
+			}
+			function parseURLQuery()
+			{
+				r = {};
+				location.search.replace("?","")
+					.split("&")
+					.map( function(q){return q.split("=")})
+					.forEach(function(a){r[a[0]]=a[1]});
+				// mobile cannot use a => a[0], "arrow function"
+				return r;
+			}
+			var lighting = false;
+			
+			setInterval(function(){
+				var blinks = document.getElementsByClassName("blink");
+				for(var i = 0; i < blinks.length; i ++)
+				{
+					if(blinks[i].style)
+					{
+						if(lighting)
+						{
+							blinks[i].style.background = blinks[i].obg;
+						}
+						else
+						{
+							blinks[i].obg = blinks[i].style.background;
+							blinks[i].style.background = "yellow";
+						}
+					}
+				}
+				lighting = !lighting;
+			}, 400);
+			
+			
+		</script>
+		<script language="javascript">
+			////////////////////////
+			var user = {};
+			function displayPlayerList(game)
+			{
+				pdom = document.getElementsByClassName("player");
+				plen = game.view.players.length;
+				p = game.view.players;
+				for(i = 0; i < 10; i ++)
+				{
+					if(i < plen)
+					{
+						pdom[i].style.display = ""; // don't use "flex" at here, because some mobile which don't support flex will ignore the action of setting.!!!!
+						pdom[i].getElementsByClassName("name")[0].textContent = p[i];
+						
+						if(game.view.chairman == i)
+							pdom[i].className = "player chairman";
+						else
+							pdom[i].className = "player";
+							
+						if(game.view.proposed.indexOf(i) >= 0)
+							pdom[i].getElementsByClassName("inproposal")[0].style.visibility = "visible";
+						else
+							pdom[i].getElementsByClassName("inproposal")[0].style.visibility = "hidden";
+							
+						switch(game.view.roles[i])
+						{
+							case "red":
+								pdom[i].style.background = "lightcoral";
+								break;
+							case "blue":
+								pdom[i].style.background = "skyblue";
+								break;
+							default:
+								pdom[i].style.background = "lightgray";
+								break;
+						}
+						
+						if(game.shouldShow == "vote")
+						{
+							pdom[i].getElementsByClassName("vote")[0].style.visibility = "visible";
+							pdom[i].getElementsByClassName("vote")[0].textContent = game.lastVote[i] ? "O" : "X";
+						}
+						else
+						{
+							pdom[i].getElementsByClassName("vote")[0].style.visibility = "hidden";
+							pdom[i].getElementsByClassName("vote")[0].textContent = "";
+						}
+
+					}
+					else
+						pdom[i].style.display = "none";
+				}
+				document.getElementById("redNumber").textContent = game.history.redNumber;
+				document.getElementById("blueNumber").textContent = game.view.players.length - game.history.redNumber;
+			}
+			function displayRoundRecord(game)
+			{
+				rcdom = document.getElementsByClassName("missionBlock");
+				var record = game.history;
+				for(i = 0; i < 5; i ++)
+				{
+					var mrdiv = rcdom[i].getElementsByClassName("missionRequirement")[0];
+					var vcdiv = rcdom[i].getElementsByClassName("voteCount")[0];
+					var erdiv = rcdom[i].getElementsByClassName("executeResult")[0];
+					mrdiv.innerHTML = "任務" + (i+1) + "<br>" + record.missionRequirements[i] + "人";
+					if(game.view.status == "Ended" || i != game.view.currentMission)
+					{
+						vcdiv.style.display = "none";
+						erdiv.style.display = "block";
+					}
+					else 
+					{
+						vcdiv.style.display = "block";
+						erdiv.style.display = "none";
+						if(i == game.view.currentMission)
+						{
+							vcdiv.style.background = "yellow";
+							vcdiv.innerHTML = "第" + record.missions[i].proposals.length + "次提名";
+						}
+					}
+					if(!record.missions[i] || record.missions[i].missionResult == undefined)
+					{
+						rcdom[i].style.background = "lightgray";
+					}
+					else if(record.missions[i].missionResult == "red")
+					{
+						rcdom[i].style.background = "lightcoral";
+					}
+					else if(record.missions[i].missionResult == "blue")
+					{
+						rcdom[i].style.background = "skyblue";
+					}
+					erdiv.innerText = "";
+					if(!!record.missions[i] && !!record.missions[i].executionResult)
+					{
+						for(var ex in record.missions[i].executionResult)
+						{
+							if(record.missions[i].executionResult[ex] == "Disrupted")
+								erdiv.innerText += "X";
+						}
+					}
+					if(game.view.players.length >= 7 && i == 3)
+					{
+						rcdom[i].style.borderStyle = "dashed";
+						rcdom[i].style.borderColor = "black";
+					}
+					else
+					{
+						rcdom[i].style.borderStyle = "";
+						rcdom[i].style.borderColor = "";
+					}
+				}
+			}
+			function displayProposePanel(game)
+			{
+				pdom = document.getElementById("proposepanel").getElementsByTagName("div");
+				plen = game.view.players.length;
+				p = game.view.players;
+				var rowCounter = 0;
+				var firstRowTop = pdom[0].offsetTop;
+				for(i = 0; i < 10; i ++)
+				{
+					if(i < plen)
+					{
+						pdom[i].style.display = "inline-block";
+						pdom[i].textContent = p[i];
+						pdom[i].style.flexGrow = "1";
+						if(game.view.proposed.indexOf(i) >= 0)
+							pdom[i].style.borderStyle = "inset";
+						else
+							pdom[i].style.borderStyle = "outset";
+						if(pdom[i].offsetTop == firstRowTop)
+							rowCounter ++;
+					}
+					else
+					{
+						pdom[i].style.display = "none";
+						pdom[i].textContent = "";
+					}
+				}
+			}
+			function displayResistanceGame(game)
+			{
+				displayPlayerList(game);
+				displayRoundRecord(game);
+				
+				var w = document.getElementById("gameInfoUI");
+				w.style.display = "block";
+				if(game.isPlaying)
+				{
+					if(game.isBlue)
+						w.innerHTML = "你是好人。";
+					else
+						w.innerHTML = "你是壞人。";
+				}
+				else
+					w.innerHTML = "你是觀眾。";
+				switch(game.status)
+				{
+					case "Proposing":
+						w.innerHTML += "現在請提名" + game.view.missionRequirement[game.view.currentMission] + "個人來執行任務。";
+						displayProposePanel(game);
+						break;
+					case "Executing":
+						w.innerHTML += "請決定你執行這次任務的策略。" + ((game.view.players.length >= 7 && game.view.currentMission == 4) ? "本次任務有兩次破壞時才會失敗。<br>" : "");
+					case "Voting":
+						w.innerHTML += "這次" + game.view.players[game.view.chairman] + "提名的人為" + game.lastPropose.join("、") + "。現在請投票。";
+						break;
+					case "WaitForStart":
+						w.innerHTML += "正在等待遊戲開始...";
+						break;
+					case "WaitForProposingFinish":
+						w.innerHTML += "現在，" + game.view.players[game.view.chairman] + "準備提名" + game.view.missionRequirement[game.view.currentMission] + "個人來執行任務。請稍等。";
+						break;
+					case "WaitForVotingFinish":
+						w.innerHTML += "正在等待其他人投票完畢...";
+						break;
+					case "WaitForExecutingFinish":
+						w.innerHTML += "正在等待派員執行任務完畢...";
+						break;
+					case "Win":
+						w.innerHTML += "<span style='font-size: 36px'>你。贏。了！</span>";
+						break;
+					case "Lose":
+						w.innerHTML += "<span style='font-size: 36px'>你輸了。</span>";
+						break;
+					case "End":
+						w.innerHTML += "遊戲結束了。";
+						break;
+					default:
+						break;
+				}
+				
+				document.getElementById("proposepanel").style.display = 		(game.status == "Proposing") ? "block" : "none";
+				document.getElementById("votepanel").style.display = 			(game.status == "Voting") ? "block" : "none";
+				document.getElementById("executemissionpanel").style.display = 	(game.status == "Executing") ? "block" : "none";
+				document.getElementById("execute_Bad").style.display = ((game.isBlue)? "none" : "block");
+			}
+			
+			
+			function ShowProperUI(states)
+			{
+				/*
+				"Proposing"
+				"Voting"
+				"Executing"
+				"WaitForStart"
+				"WaitForProposingFinish"
+				"WaitForVotingFinish"
+				"WaitForExecutingFinish"
+				"Win"
+				"Lose"
+				"End"
+				*/
+				document.getElementById("userName").innerText = user.name;
+				
+				document.getElementById("roomName").innerText = states.room.name;
+				var r = document.getElementById("roomsUI");
+				if(states.room.id == 0) // in Lobby
+				{
+					document.getElementById("leaveRoom").style.display = "none";
+					r.style.display = "block";
+					r.innerHTML = "<b>Room List</b>:<br>";
+					for(var i in states.connectTo)
+					{
+						if(states.connectTo[i] != undefined)
+						{
+							r.insertAdjacentHTML("beforeend", "<div>" + states.connectTo[i].name + " (" + states.connectTo[i].users.length + ")</div>");
+							r.lastElementChild.id = "room_" + states.connectTo[i].id;
+							if(states.connectTo[i].id != states.room.id)
+							{
+								r.lastElementChild.addEventListener("click", moveHandler);
+								r.lastElementChild.style.borderStyle = "outset";
+							}
+						}
+					}
+				}
+				else
+				{
+					document.getElementById("leaveRoom").style.display = "inline-block";
+					r.style.display = "none";
+					r.innerHTML = "";
+				}
+				
+				document.getElementById("chatUI").style.display = "block";
+				var ch = document.getElementById("chatDisplay");
+				ch.innerHTML = user.chatContent;
+				// TODO: auto scroll !! done
+				ch.scrollTop = ch.scrollHeight;
+				
+				if(states.game == undefined) // not in game
+				{
+					document.getElementById("gameUI").style.display = "none";
+					document.getElementById("roomUI").style.display = "block";
+					
+					
+					
+					var u = document.getElementById("usersUI");
+					u.innerHTML = "<b>User List</b>:<br>";
+					for(var i in states.room.users)
+					{
+						u.insertAdjacentHTML("beforeend", "<div>" + states.room.users[i] + "</div>");
+						var uItem = u.lastElementChild;
+						uItem.id = "user_" + states.room.users[i];
+					}
+					
+					document.getElementById("specGame").style.display = "none";
+					if(states.room.id == 0) // in Lobby
+					{
+						document.getElementById("newRoomUI").style.display = "block";
+						document.getElementById("newGameUI").style.display = "none";
+						document.getElementById("specGame").style.display = "none";
+					}
+					else
+					{
+						document.getElementById("newRoomUI").style.display = "none";
+						var ng = document.getElementById("newGameUI");
+						if(!states.room.playing)
+						{
+							ng.style.display = "block";
+							document.getElementById("startGame").disabled = (states.room.users.length < 5);
+						}
+						else
+						{
+							ng.style.display = "none";
+							document.getElementById("specGame").style.display = "inline-block";
+						}
+						
+					}
+					document.getElementById("newRoomName").value = "";
+				}
+				else
+				{
+					document.getElementById("gameUI").style.display = "block";
+					document.getElementById("roomUI").style.display = "none";
+					displayResistanceGame(states.game);
+					document.getElementById("endGame").style.display = ((states.game.view.status == "Ended") ? "inline-block" : "none");
+					
+				}
+				adjustUI();
+				adjustUI(); // why do it twice? well, it seems the mobiles can normally show by doing so.
+			}
+			
+			function moveToLobbyHandler(event)
+			{
+				user.socket.emit_t("toServer", {
+					cmd: "move",
+					roomId: 0
+				});
+			}
+			document.getElementById("leaveRoom").addEventListener("click", moveToLobbyHandler);
+			function moveHandler(event)
+			{
+				user.socket.emit_t("toServer", {
+					cmd: "move",
+					roomId: this.id.replace("room_","")
+				});
+			}
+			function newRoomHandler(event)
+			{
+				if(!checkInput(document.getElementById("newRoomName").value))
+					return;
+				user.socket.emit_t("toServer", {
+					cmd: "createRoom",
+					name: document.getElementById("newRoomName").value
+				});
+			}
+			document.getElementById("newRoom").addEventListener("click", newRoomHandler);
+			
+			function startGameHandler(event)
+			{
+				user.socket.emit_t("toServer", {
+					cmd: "startgame",
+					gameName: "Resistance"
+				});
+			}
+			document.getElementById("startGame").addEventListener("click", startGameHandler);
+			
+			function specGameHandler(event)
+			{
+				user.socket.emit_t("toServer", {
+					cmd: "specgame"
+				});
+			}
+			document.getElementById("specGame").addEventListener("click", specGameHandler);
+			
+			function endGameHandler(event)
+			{
+				user.socket.emit_t("toServer", {
+					cmd: "endgame"
+				});
+			}
+			document.getElementById("endGame").addEventListener("click", endGameHandler);
+			
+			function showRoundHistory(missionIndex)
+			{
+				var h = user.states.game.history;
+				var m = user.states.game.history.missions[missionIndex];
+				var str = "任務" + (missionIndex+1) + "\n"
+						+ "需要" + h.missionRequirements[missionIndex] + "人\n";
+				if(m != null)
+				{
+					if(m.acceptedProposal != null)
+						str += "執行者: " + m.acceptedProposal.join("、") + "\n";
+					if(m.executionResult != null)
+					{
+						var redc = 0;
+						for(var i = 0; i < h.missionRequirements[missionIndex]; i ++)
+						{
+							if(m.executionResult[i] == "Disrupted")
+								redc ++;
+						}
+						str += "執行結果: " + redc + "次破壞\n";
+					}
+					if(m.missionResult != null)
+					{
+						str += "任務" + (m.missionResult == "blue" ? "成功" : "失敗") + "\n";
+					}
+					str += "\n";
+					for(var i = 4; i >= 0; i --)
+					{
+						if(m.proposals[i] != null)
+						{
+							str += "第" + (i+1) + "次提案\n";
+							if(m.proposals[i].chairman != null)
+							str += "提案人: " + m.proposals[i].chairman + "\n";
+							if(m.proposals[i].proposal != null)
+								str += "提名: " + m.proposals[i].proposal.join("、") + "\n";
+							if(m.proposals[i].votes != null)
+							{
+								str += "投票:\n";
+								for(var j = 0; j < h.players.length; j ++)
+								{
+									str += "　" + h.players[j] + ": " + (m.proposals[i].votes[j] ? "O" : "X") + "\n";
+								}
+							}
+							if(m.proposals[i].voteResult != null)
+							{
+								str += "投票結果:" + (m.proposals[i].voteResult == "Accepted" ? "通過" : "不通過") + "\n";
+							}
+							str += "\n";
+						}
+					}
+				}
+				alert(str);
+			}
+			for(var i = 0; i < 5; i ++)
+			{
+				document.getElementById("mission_"+i).addEventListener("click",function(){
+					showRoundHistory(parseInt(this.id.replace("mission_","")));
+				});
+			}
+			
+			function proposeCheckHandler(event)
+			{
+				user.socket.emit_t("toServer",{
+					"cmd": "game",
+					"action": "proposeToggle",
+					"param": this.innerText,
+				});
+				/*
+				if(event.target.checked)
+				{
+					user.socket.emit_t("toServer",{
+						"cmd": "game",
+						"action": "proposeToggle",
+						"param": event.target.innerText,
+					});
+				}
+				else
+				{
+					user.socket.emit_t("toServer",{
+						"cmd": "game",
+						"action": "cancelPropose",
+						"param": event.target.innerText,
+					});
+				}
+				*/
+			}
+			for(var i = 0; i < 10; i ++)
+				document.getElementById("proposeName_"+i).addEventListener("click",proposeCheckHandler);
+			
+			function proposeDoneHandler()
+			{
+				user.socket.emit_t("toServer",{
+					"cmd": "game",
+					"action": "proposeDone",
+					"param": undefined,
+				});
+			}
+			document.getElementById("proposeDone").addEventListener("click",proposeDoneHandler);
+			function voteHandler(event)
+			{
+				user.socket.emit_t("toServer",{
+					"cmd": "game",
+					"action": "vote",
+					"param": !!this.id.match("Yes"),
+				});
+			}
+			document.getElementById("vote_Yes").addEventListener("click",voteHandler);
+			document.getElementById("vote_No").addEventListener("click",voteHandler);
+			function executeHandler(event)
+			{
+				user.socket.emit_t("toServer",{
+					"cmd": "game",
+					"action": "execute",
+					"param": !!this.id.match("Bad"),
+				});
+			}
+			document.getElementById("execute_Good").addEventListener("click",executeHandler);
+			document.getElementById("execute_Bad").addEventListener("click",executeHandler);
+			
+			function sayHandler(event)
+			{
+				if(!checkInput(document.getElementById("chatInput").value))
+					return;
+				user.socket.emit_t("toServer", {
+					"cmd": "say",
+					"sentence": document.getElementById("chatInput").value,
+				});
+				document.getElementById("chatInput").value = "";
+			}
+			document.getElementById("chatSend").addEventListener("click",sayHandler);
+			
+			function newUserEnter(name, password)
+			{
+				user.name = name;
+				user.password = password;
+				user.chatContent = "";
+				user.states = undefined;
+				user.msgtimer = [];
+				user.socket = io(window.location.origin);
+				user.socket.emit_t = function(event, data)
+				{
+					user.socket.emit(event, data);
+					user.msgtimer.push(setTimeout(function(){user.socket.disconnect();user.socket.connect();}, 5000));
+				}
+				//user.socket.emit("login", {name: user.name, password: user.password});
+				user.socket.on("AskForName", function(){
+					user.socket.emit("login", {name: user.name, password: user.password});
+				});
+				user.socket.on("Check", function(){
+					user.socket.emit("ReplyCheck");
+				});
+				user.socket.on("toClient", function(data){
+					user.msgtimer.forEach(clearTimeout);
+					user.msgtimer = [];
+					console.log(user.name + " received somthing.");
+					
+					if(data.cmd == "show")
+					{
+						user.states = data;
+					}
+					else if(data.cmd == "enter")
+					{
+						//user.chatContent += ("<i>" + data.user + "進到了房間。</i><br>");
+						user.socket.emit_t("toServer", {cmd: "get"});
+					}
+					else if(data.cmd == "leave")
+					{
+						//user.chatContent += ("<i>" + data.user + "離開了房間。</i><br>");
+						user.socket.emit_t("toServer", {cmd: "get"});
+					}
+					else if(data.cmd == "MSG")
+					{
+						//alert(data.user + " say " + data.sentence);
+						user.chatContent += (data.user + ": " + data.content + "<br>");
+					}
+					else if(data.cmd == "notice")
+					{
+						alert(data.content);
+					}
+					try{
+						ShowProperUI(user.states);
+					}catch(e){
+						console.log(e.message);
+						console.log(e.stack);
+					}
+				});
+				user.socket.on("Error", function(data){
+					alert(data.message);
+				});
+				user.socket.on("error", function(er){
+					console.log(er.message);
+					console.log(er.stack);
+				});
+				//user.socket.emit_t("login", {name: user.name});
+				user.socket.on("loginSuccess", function(data){
+					user.socket.emit_t("toServer", {cmd: "get"});
+				});
+				user.socket.on("loginFailed", function(data){
+					document.body.innerHTML = "登入失敗，請重新整理";
+				});
+				document.getElementById("UIArea").style.display = "block";
+			}
+			
+			
+			var queries = parseURLQuery();
+			if(queries.name && queries.id && checkInput(queries.name) && checkInput(queries.id))
+			{
+				newUserEnter(queries.name, queries.id);
+				
+				window.onbeforeunload = function(){
+						return '確定要離開嗎？';
+				};
+				
+				window.onunload = function(){
+					user.socket.emit("toServer", {cmd: "leave"});
+					document.body.innerHTML = "unloaded";
+				};
+			}
+			else
+			{
+				var inputName = prompt("請輸入您的名字：");
+				if(!checkInput(inputName))
+					document.body.innerHTML = "請先輸入您的名字"
+				else
+				{
+					var inputPassowrd = prompt("請輸入你的密碼(沒有設定過的話可輸入一組新密碼)：");
+					if(!checkInput(inputPassowrd))
+						document.body.innerHTML = "請輸入您的密碼"
+					else
+					{
+						location.href = location.origin + location.pathname + "?name=" + inputName + "&id=" + inputPassowrd;
+						//newUserEnter(inputName, inputPassowrd);
+					}
+				}
+			}
+			
+			//setInterval(function(){user.socket.disconnect();user.socket.connect();},10000);
+		</script>
+	</body>
+</html>

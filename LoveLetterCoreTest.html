@@ -1,0 +1,130 @@
+﻿<html>
+<body style="/*display: flex; justify-content: space-around;*/">
+<script language="javascript" src="LoveLetter.js"></script>
+<script language="javascript">
+try{game = new Game();}catch(e){console.error(e)}
+try{game = new Game(0);}catch(e){console.error(e)}
+try{game = new Game(1);}catch(e){console.error(e)}
+try{game = new Game(5);}catch(e){console.error(e)}
+
+try{game = new Game(4);}catch(e){console.error(e)}
+</script>
+<style>
+.msg{
+width: 100%;
+background: lightgray;
+overflow: auto;
+}
+.states{
+width: 100%;
+background: lightblue;
+overflow: auto;
+}
+.name{
+width: 20%;
+background: pink;
+text-align: center;
+position: relative;
+font-size: x-large;
+}
+.playerWindow{
+height: 100%;
+width: 100%;
+}
+</style>
+<div id="0" class="playerWindow"><div class="name">A</div><div class="states"></div><div class="msg"></div></div>
+<div id="1" class="playerWindow"><div class="name">B</div><div class="states"></div><div class="msg"></div></div>
+<div id="2" class="playerWindow"><div class="name">C</div><div class="states"></div><div class="msg"></div></div>
+<div id="3" class="playerWindow"><div class="name">D</div><div class="states"></div><div class="msg"></div></div>
+<div id="4" class="playerWindow"><div class="name">Admin</div><div class="states"></div><div class="msg"></div></div>
+<script language="javascript">
+document.body.addEventListener("mousemove",
+function(e){k=Math.floor(e.clientX*5/document.body.offsetWidth);
+for(i = 0; i < 5; i ++)
+{
+document.getElementById(i).style.display = (k==i?"block":"none");
+document.getElementById(i).getElementsByClassName("name")[0].style.left = (i*20) + "%";
+}})
+function user(userID, name)
+{
+	this.name = name;
+	this.ctrl;
+	this.getCtrl = function(ctrl){
+		ctrl.name = name;
+		ctrl.user = this;
+		this.ctrl = ctrl;
+		this.notice(ctrl.lastmsgs);
+	}
+	this.notice = function(msg){
+		msgdiv = document.getElementById(userID).getElementsByClassName("msg")[0];
+		while(m = this.ctrl.lastmsgs.shift())
+		{
+			msgdiv.insertAdjacentHTML("afterbegin", JSON.stringify(m) + "<br>");
+		}
+		this.readStates();
+	}
+	this.readStates = function(){
+		statesdiv = document.getElementById(userID).getElementsByClassName("states")[0];
+		st=this.ctrl.update();
+		s="";
+		for(i in st)
+		{
+			if(i != "players")
+			s += i + ": " + st[i] + "<br>";
+		}
+		s += "players:<br><table style='margin: 3px;'>";
+		for(i in st.players)
+		{
+			s += "<tr>";
+			s += "<td>id: " + st.players[i].id + "</td>";
+			s += "<td>isOut: " + st.players[i].isOut + "</td>";
+			s += "<td>cards: " + JSON.stringify(st.players[i].cards) + "</td>";
+			s += "<td>isProtected: " + st.players[i].isProtected + "</td>";
+			s += "<td>loves: " + st.players[i].loves + "</td>";
+			s += "<td>discards: " + JSON.stringify(st.players[i].discards) + "</td>";
+			s += "</tr>";
+		}
+		s += "</table>";
+		statesdiv.innerHTML = s;
+	}
+}
+a = new user(0, "A");
+b = new user(1, "B");
+c = new user(2, "C");
+d = new user(3, "D");
+admin = new user(4, "Admin");
+
+g0 = game.getCtrl(null,"player",0);
+g1 = game.getCtrl(null,"player",1);
+g2 = game.getCtrl(null,"player",2);
+g3 = game.getCtrl(null,"player",3);
+g4 = game.getCtrl(null,"admin",4);
+
+console.log(g0.name);
+console.log(g0.user);
+a.getCtrl(g0);
+b.getCtrl(g1);
+c.getCtrl(g2);
+d.getCtrl(g3);
+admin.getCtrl(g4);
+
+game.start();
+
+var count = 0;
+ii=setInterval(function(){
+
+p = g4.getPlayers();
+p[0].cards = [1,4];
+p[1].isOut = true;
+p[2].isOut = true;
+p[3].isOut = true;
+g4.setDeck([]);
+admin.notice();
+g0.doDiscard({useCard: 4});
+count ++;
+if(count >= 3)
+	clearInterval(ii);
+},2000);
+</script>
+</body>
+</html>

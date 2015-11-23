@@ -1,0 +1,518 @@
+﻿<html>
+<body style="/*display: flex; justify-content: space-around;*/">
+<script language="javascript" src="Coup.js"></script>
+<style>
+.msg {
+width: 100%;
+height: 90%;
+background: lightgray;
+overflow: auto;
+}
+.states {
+width: 100%;
+height: 90%;
+background: lightblue;
+overflow: auto;
+}
+.name {
+width: 14%;
+background: pink;
+text-align: center;
+position: relative;
+font-size: x-large;
+}
+.screen {
+height: 100%;
+width: 100%;
+}
+.choice {
+width: 100%;
+height: 90%;
+background: lemonchiffon;
+}
+.choicemsg {
+width: 100%;
+height: 33%;
+font-size: x-large;
+border-style: solid;
+border-width: 1px;
+display: flex;
+justify-content: center;
+align-items: center;
+text-align: center;
+}
+.choicebutton {
+width: 10%;
+display: inline-block;
+border-style: outset;
+border-width: 5px;
+text-align: center;
+}
+</style>
+<div id="0" class="screen"><div class="gameDisplay"><div class="name">A</div><div class="states"></div><div class="choice"></div><div class="msg"></div></div></div>
+<div id="1" class="screen"><div class="gameDisplay"><div class="name">B</div><div class="states"></div><div class="choice"></div><div class="msg"></div></div></div>
+<div id="2" class="screen"><div class="gameDisplay"><div class="name">C</div><div class="states"></div><div class="choice"></div><div class="msg"></div></div></div>
+<div id="3" class="screen"><div class="gameDisplay"><div class="name">D</div><div class="states"></div><div class="choice"></div><div class="msg"></div></div></div>
+<div id="4" class="screen"><div class="gameDisplay"><div class="name">E</div><div class="states"></div><div class="choice"></div><div class="msg"></div></div></div>
+<div id="5" class="screen"><div class="gameDisplay"><div class="name">F</div><div class="states"></div><div class="choice"></div><div class="msg"></div></div></div>
+<div id="6" class="screen"><div class="gameDisplay"><div class="name">Admin</div><div class="states"></div><div class="choice"></div><div class="msg"></div></div></div>
+<script language="javascript">
+game = new Game(6);
+run = function(arg){return test("run("+JSON.stringify(arg)+")")};
+getstates = function(){
+	return {
+		status:test("status"),
+		players:test("players"),
+		deck:test("deck"),
+		waiting:test("waiting"),
+		actor:test("actor"), 
+		action:test("action"), 
+		counterer:test("counterer"), 
+		counter:test("counter"), 
+		doubter:test("doubter"), 
+		doubtee:test("doubtee"), 
+		maybeCounter:test("maybeCounter"), 
+		victim:test("victim"),
+		whoToDie:test("whoToDie"),
+		winner:test("winner"),
+	}
+};
+parseStates = function(o){
+	s = "";
+	for(var i in o){
+		if(i=="players")
+		{
+			s+=i+" : [<br>";
+			for(j in o[i])
+			{
+				s+=j+" : "+JSON.stringify(o[i][j])+",<br>";
+			}
+			s+="],<br>";
+		}
+		else
+		{
+			s+=i+" : "+JSON.stringify(o[i])+"<br>";
+		}
+	}
+	return s;
+};
+printStates = function(){
+	document.body.innerHTML = parseStates(getstates()) + "<hr>" + document.body.innerHTML;
+};
+RUN = function(s){run(s);printStates();}
+DO = function(){
+	P();
+	setTimeout(P,3000);
+	rs = {status:test("status")};
+	rs.subjectID=arguments[0];
+	for(var i = 1; i < arguments.length; i +=2)
+	{
+		try{ rs[arguments[i]]=arguments[i+1] }
+		catch(e){ console.error(e)}
+	}
+	RUN(rs);
+}
+ALLNO = function(){
+	for(var i = 0; i < 6; i ++)
+	{
+		try{if(test("status")[0] == "WaitDoubt"){DO(i,DT,false)}else {DO(i,CR,"放棄");}}
+		catch(e){console.log("i="+i);console.error(e);}
+	}
+	setTimeout(P,4000);
+	setTimeout(P,7000);
+}
+var repeatPrint;
+P = function(){
+	if(repeatPrint)
+	{
+		clearInterval(repeatPrint);
+		repeatPrint = undefined;
+	}
+	else
+	{
+		repeatPrint = setInterval(printStates, 1000);
+	}
+	
+};
+
+
+AC="action";
+VC="victim";
+CR="counter";
+DT="doubt";
+PF="proof";
+DY="die";
+DR="drops";
+
+a1="$+1";
+a2="$+2";
+cp="coup";
+a3="$+3";
+ki="kill";
+st="steal";
+ch="change";
+
+J="公爵";
+K="殺手";
+S="大使";
+C="船長";
+Q="女爵";
+X="放棄";
+
+T=true;
+F=false;
+
+//printStates();
+//RUN();
+
+function User(name)
+{
+	this.name = name;
+	
+	this.screen;
+	this.send = function(msgkind,m)
+	{
+		if(screen != undefined)
+		{
+			if(msgkind == "game")
+			{
+				displayAll(this.screen, m.msgs, m.states);
+			}
+		}
+	}
+	
+	this.ctrl;
+	this.setCtrl = function(ctrl)
+	{
+		this.ctrl = ctrl;
+		ctrl.user = this;
+	}
+	this.inform = function()
+	{
+		var m = {};
+		/*
+		while((m = ctrl.readmsg()) != undefined)
+		{
+			this.send("msg",m);
+		}
+		*/
+		m.msgs = this.ctrl.readallmsg();
+		m.states = this.ctrl.getGameStates();
+		this.send("game",m);
+	}
+	this.inputToGame = function()
+	{
+		try
+		{
+			this.ctrl.input.apply(this.ctrl, arguments);
+		}
+		catch(e)
+		{
+			this.send("game",{msgs:[{event:"error", msg: e.message}]});
+		}
+	}
+}
+function displayAll(screen, msgs, states)
+{
+/*
+	for(var i = 0; i < msgs.length; i ++)
+	{
+		(function(){
+			var ni = i;
+			setTimeout(function(){
+			displayMsg(screen, msgs[ni]);
+			}, i*500);
+		})(); // 為什麼非得這樣
+	}
+	*/
+	msgs.forEach(function(v,i,a){
+		setTimeout(function(){displayMsg(screen, msgs[i]);}, i*500);
+	});
+	if(states != undefined)
+		setTimeout(function(){displayStates(screen, states);}, msgs.length*500);
+}
+
+function displayMsg(screen, msg)
+{
+	if(screen == undefined)
+		screen = document;
+	var view = screen.getElementsByClassName("msg")[0];
+	view.innerHTML = JSON.stringify(msg) + "<br>" + view.innerHTML;
+}
+
+function displayStates(screen, states)
+{
+	if(screen == undefined)
+		screen = document;
+	var statesView = screen.getElementsByClassName("states")[0];
+	statesView.innerHTML = parseStates( states );
+	var msgView = screen.getElementsByClassName("msg")[0];
+	msgView.innerHTML = "<hr>" + parseStates( states ) + "<br>" + msgView.innerHTML;
+	var choiceView = screen.getElementsByClassName("choice")[0];
+	showChoiceButton(choiceView, states)
+}
+
+
+function showChoiceButton(view, states)
+{
+	var myID = states.myID;
+
+	u[myID].choicesSet = getChoices(states);
+	u[myID].asking = u[myID].choicesSet.first;
+	
+	u[myID].response = [];
+	
+	addChoiceButton(view, states.myID);
+}
+
+function selectChoice(evt)
+{
+	var myID = evt.currentTarget.subjectID;
+	evt.bubbles = false;
+	
+	if(evt.currentTarget.value != undefined)
+		u[myID].response.push(evt.currentTarget.value);
+	u[myID].asking = evt.currentTarget.next;
+	if(u[myID].asking == "done")
+		u[myID].inputToGame.apply(u[myID],u[myID].response);
+	else
+		addChoiceButton(evt.currentTarget.parentNode , myID);
+}
+
+function addChoiceButton(view, myID)
+{
+	view.innerHTML = "";
+	var dv;
+	var choiceList;
+	if(u[myID].asking != "done" && u[myID].asking != undefined)
+	{
+		dv = document.createElement("div");
+		dv.classList.add("choicemsg");
+		dv.innerText = u[myID].choicesSet[u[myID].asking].msg;
+		view.appendChild(dv);
+		
+		choiceList = u[myID].choicesSet[u[myID].asking].choices;
+		for(var i in choiceList)
+		{
+			dv = document.createElement("div");
+			dv.classList.add("choicebutton");
+			dv.value = choiceList[i].value;
+			dv.next = choiceList[i].next;
+			dv.textContent = choiceList[i].text;
+			dv.subjectID = myID;
+			dv.addEventListener("click", selectChoice);
+			view.appendChild(dv);
+		}
+		
+		if(u[myID].choicesSet[u[myID].asking].prev != undefined)
+		{
+			dv = document.createElement("div");
+			dv.classList.add("choicebutton");
+			//dv.value = "delete";
+			dv.next = u[myID].choicesSet[u[myID].asking].prev;
+			dv.innerText = "上一步";
+			dv.subjectID = myID;
+			dv.addEventListener("click", selectChoice);
+			view.appendChild(dv);
+		}
+	}
+}
+
+function getChoices(states)
+{
+	if(!states.waiting[states.myID])
+	{
+		return {};
+	}
+	else
+	{
+		if(states.status[0] == "WaitAction")
+		{
+			var r = {	first: "action",
+						action: 
+						{	msg: "選擇行動",
+							choices:
+							[
+								{value:"$+1"   , next:"done"  , text: "拿一元", },
+								{value:"$+2"   , next:"done"  , text: "拿二元", },
+								{value:"coup"  , next:"victim", text: "政變", },
+								{value:"$+3"   , next:"done"  , text: "拿三元", },
+								{value:"kill"  , next:"victim", text: "刺殺", },
+								{value:"steal" , next:"victim", text: "偷錢", },
+								{value:"change", next:"done"  , text: "換牌", },
+							],
+						},
+						victim:
+						{	msg: "選擇對象",
+							choices : states.players
+								.filter(
+									function(v){
+										if(v.id != states.myID && v.isAlive)
+											return true;
+										else
+											return false;
+									}
+								)
+								.map(
+									function(v){
+										return {value:v.id,next:"done",text:states.userName[v.id]};
+									}
+								),
+							prev: "action",
+						}
+					}
+			return r;
+		}
+		else if(states.status[0] == "WaitDoubt" || states.status[0] == "WaitProof")
+		{
+			var r = {	first: "TF",
+						TF: 
+						{	msg: (states.status[0] == "WaitDoubt" ? "要質疑他嗎?" : "要亮牌證明嗎?"),
+							choices:
+							[
+								{value:true	, next:"done",text:"要"},
+								{value:false, next:"done",text:"不要"},	
+							]
+						},
+					}
+			return r;
+		}
+		else if(states.status[0] == "WaitCounter" || states.status[0] == "WaitKill" || states.status[0] == "WaitDrop")
+		{
+			var r = {	first: "card",
+						card: 
+						{	msg: (	states.status[0] == "WaitCounter" ? "選擇反制行動" :
+									states.status[0] == "WaitKill" ? "選擇殺死" :
+																		"選擇棄牌"),
+							choices:function(){
+								if(states.status[0] == "WaitCounter")
+								{
+									if(states.action == "$+2")
+										return [{value:"公爵", next:"done", text: "公爵"}];
+									if(states.action == "kill")
+										return [{value:"女爵", next:"done", text: "女爵"}];
+									if(states.action == "steal")
+										return [{value:"大使", next:"done", text: "大使"},
+												{value:"船長", next:"done", text: "船長"}];
+								}
+								if(states.status[0] == "WaitKill" || states.status[0] == "WaitDrop")
+									return states.players[states.myID].cards.map(function(v){return {value:v,text:v,next:"done"};});
+							}(),
+						},
+					}
+			return r;
+		}
+	}
+}
+
+u=[];
+ua = u[0] = new User("A");
+ub = u[1] = new User("B");
+uc = u[2] = new User("C");
+ud = u[3] = new User("D");
+ue = u[4] = new User("E");
+uf = u[5] = new User("F");
+admin = u[6] = new User("admin");
+
+ua.screen = document.getElementById("0");
+ub.screen = document.getElementById("1");
+uc.screen = document.getElementById("2");
+ud.screen = document.getElementById("3");
+ue.screen = document.getElementById("4");
+uf.screen = document.getElementById("5");
+admin.screen = document.getElementById("6");
+
+
+g0 = game.getCtrl("player",0);
+g1 = game.getCtrl("player",1);
+g2 = game.getCtrl("player",2);
+g3 = game.getCtrl("player",3);
+g4 = game.getCtrl("player",4);
+g5 = game.getCtrl("player",5);
+ga = game.getCtrl("admin",6);
+
+ua.setCtrl(g0);
+ub.setCtrl(g1);
+uc.setCtrl(g2);
+ud.setCtrl(g3);
+ue.setCtrl(g4);
+uf.setCtrl(g5);
+admin.setCtrl(ga);
+
+
+
+document.body.addEventListener("mousemove",
+function(e){
+if(e.ctrlKey)
+	return;
+
+k=Math.floor(e.clientX*7/document.body.offsetWidth);
+for(i = 0; i < 7; i ++)
+{
+document.getElementById(i).style.display = (k==i?"block":"none");
+document.getElementById(i).getElementsByClassName("name")[0].style.left = (i*14) + "%";
+}
+if(e.clientY < document.body.offsetHeight/3)
+{
+Array.from(document.getElementsByClassName("states")).forEach(function(v){v.style.display="";});
+Array.from(document.getElementsByClassName("choice")).forEach(function(v){v.style.display="none";});
+Array.from(document.getElementsByClassName("msg")).forEach(function(v){v.style.display="none";});
+}
+else if(e.clientY < document.body.offsetHeight*2/3)
+{
+Array.from(document.getElementsByClassName("states")).forEach(function(v){v.style.display="none";});
+Array.from(document.getElementsByClassName("choice")).forEach(function(v){v.style.display="";});
+Array.from(document.getElementsByClassName("msg")).forEach(function(v){v.style.display="none";});
+}
+else
+{
+Array.from(document.getElementsByClassName("states")).forEach(function(v){v.style.display="none";});
+Array.from(document.getElementsByClassName("choice")).forEach(function(v){v.style.display="none";});
+Array.from(document.getElementsByClassName("msg")).forEach(function(v){v.style.display="";});
+}
+})
+
+game.start();
+
+/*
+a = new user(0, "A");
+b = new user(1, "B");
+c = new user(2, "C");
+d = new user(3, "D");
+admin = new user(4, "Admin");
+
+g0 = game.getCtrl(null,"player",0);
+g1 = game.getCtrl(null,"player",1);
+g2 = game.getCtrl(null,"player",2);
+g3 = game.getCtrl(null,"player",3);
+g4 = game.getCtrl(null,"admin",4);
+
+console.log(g0.name);
+console.log(g0.user);
+a.getCtrl(g0);
+b.getCtrl(g1);
+c.getCtrl(g2);
+d.getCtrl(g3);
+admin.getCtrl(g4);
+
+game.start();
+
+var count = 0;
+ii=setInterval(function(){
+
+p = g4.getPlayers();
+p[0].cards = [1,4];
+p[1].isOut = true;
+p[2].isOut = true;
+p[3].isOut = true;
+g4.setDeck([]);
+admin.notice();
+g0.doDiscard({useCard: 4});
+count ++;
+if(count >= 3)
+	clearInterval(ii);
+},2000);
+*/
+</script>
+</body>
+</html>
